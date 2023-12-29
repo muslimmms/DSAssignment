@@ -15,15 +15,15 @@ import java.io.FileNotFoundException;
 public class SchedulingSystems {
 
     // Define the structures for scheduling systems
-    private MyQueue<Task> queueSystem;
-    private MyLinkedList<Task> linkedListSystem;
-    private MyStack<Task> stackSystem;
+    private final MyQueue<Task> queueSystem;
+    private final MyLinkedList<Task> linkedListSystem;
+    private final MyStack<Task> stackSystem;
 
     // Constructor to initialize the systems
     public SchedulingSystems() {
-        queueSystem = new MyQueue<>(30);
+        queueSystem = new MyQueue<>(22);
         linkedListSystem = new MyLinkedList<>();
-        stackSystem = new MyStack<>(30);
+        stackSystem = new MyStack<>(22);
     }
 
     // Method to read tasks from tasks.txt and populate scheduling systems
@@ -73,7 +73,7 @@ public class SchedulingSystems {
 
         while (!queueSystem.isEmpty()) {
             Task currentTask = queueSystem.dequeue();
-            long executionTime = calculateExecutionTime(currentTask);
+            long executionTime = Task.calculateExecutionTime(currentTask);
 
             // Calculate and print the response and turnaround times for the current task
             long responseTime = currentTime / 1000; // Convert nanoseconds to microseconds
@@ -102,8 +102,96 @@ public class SchedulingSystems {
         System.out.printf("Average Response Time: %-20s%n", averageResponseTime + " microseconds");
         System.out.printf("Average Turnaround Time: %-20s%n", averageTurnaroundTime + " microseconds");
     }
+    
+    public void executeQueueSystemPriority() {
+        int taskCount = 1; // Initialize the task count
+        long currentTime = 0; // Keep track of the current time in nanoseconds
+        long totalResponseTime = 0; // Total response time for all tasks
+        long totalTurnaroundTime = 0; // Total turnaround time for all tasks
 
+        // Print header for the table
+        System.out.printf("%-5s %-40s %-30s %-20s %-30s %-20s %-20s%n",
+                "Count",
+                "Task",
+                "Started Time",
+                "Response Time",
+                "Completed Time",
+                "Turnaround Time",
+                "Execution Time");
 
+        // Sort tasks by priority (you need to implement a method to sort tasks by priority)
+        sortTasksByPriority();
+
+        while (!queueSystem.isEmpty()) {
+            Task currentTask = queueSystem.dequeue();
+            long executionTime = Task.calculateExecutionTime(currentTask);
+
+            // Calculate and print the response and turnaround times for the current task
+            long responseTime = currentTime / 1000; // Convert nanoseconds to microseconds
+            long turnaroundTime = (currentTime + executionTime) / 1000; // Convert nanoseconds to microseconds
+            System.out.printf("%-5d %-40s %-30s %-20s %-30s %-20s %-20s%n",
+                    taskCount,
+                    currentTask,
+                    currentTime,
+                    responseTime + " microseconds",
+                    (currentTime + executionTime) + " microseconds",
+                    turnaroundTime + " microseconds",
+                    executionTime + " microseconds");
+
+            // Update total response and turnaround times
+            totalResponseTime += responseTime;
+            totalTurnaroundTime += turnaroundTime;
+
+            // Update the current time
+            currentTime += executionTime;
+            taskCount++;
+        }
+
+        // Calculate and print average response and turnaround times
+        long averageResponseTime = totalResponseTime / queueSystem.getSize();
+        long averageTurnaroundTime = totalTurnaroundTime / queueSystem.getSize();
+        System.out.printf("Average Response Time: %-20s%n", averageResponseTime + " microseconds");
+        System.out.printf("Average Turnaround Time: %-20s%n", averageTurnaroundTime + " microseconds");
+    }
+    private void sortTasksByPriority() {
+        int n = queueSystem.getSize();
+        MyQueue<Task> tempQueue = new MyQueue<>(n);
+
+        // Copy tasks to a temporary queue
+        while (!queueSystem.isEmpty()) {
+            tempQueue.enqueue(queueSystem.dequeue());
+        }
+
+        // Selection Sort
+        for (int i = 0; i < n - 1; i++) {
+            int minIndex = i;
+            Task minTask = null;
+
+            // Dequeue tasks from the temporary queue and find the task with the minimum priority
+            for (int j = i; j < n; j++) {
+                Task currentTask = tempQueue.dequeue();
+                if (minTask == null || Task.compareByExecutionTime(currentTask, minTask) < 0) {
+                    if (minTask != null) {
+                        tempQueue.enqueue(minTask);
+                    }
+                    minTask = currentTask;
+                    minIndex = j;
+                } else {
+                    tempQueue.enqueue(currentTask);
+                }
+            }
+                    // Print statements to check the sorting process
+            System.out.println("Selected Task: " + minTask);
+            System.out.println("Current Queue: " + tempQueue);
+            // Enqueue the sorted task into the original queue
+            queueSystem.enqueue(minTask);
+        }
+
+        // Enqueue the remaining tasks back to the original queue
+        while (!tempQueue.isEmpty()) {
+            queueSystem.enqueue(tempQueue.dequeue());
+        }
+    }
     // Method to execute tasks using LinkedList scheduling system
     public void executeLinkedListSystem() {
         // Implement the execution logic using LinkedList
@@ -113,176 +201,7 @@ public class SchedulingSystems {
     public void executeStackSystem() {
         // Implement the execution logic using Stack (LIFO)
     }
-
-    // Method to calculate average response time and turnaround time for each system
-    public void calculateMetrics() {
-        // Implement the logic to calculate and print metrics
-    }
-    private long calculateExecutionTime(Task currentTask) {
-        long startTime = System.nanoTime();
-
-        // Execute the task (replace this with the actual execution logic)
-        executeTask(currentTask);
-
-        long endTime = System.nanoTime();
-
-        return (endTime - startTime) / 1000; // Return execution time
-    }
-    // Replace this method with the actual execution logic
-    private void executeTask(Task task) {
-        // You may call the respective method from StarterPack.java based on the task
-        // For example:
-        if ("isPrime".equals(task.methodName)) {
-            long inputValue = Long.parseLong(task.input.toString());
-            boolean result = StarterPack.isPrime(inputValue);
-        } else if ("fib".equals(task.methodName)) {
-            int inputValue = Integer.parseInt(task.input.toString());
-            int result = StarterPack.fib(inputValue);
-        } else if ("getNthUglyNo".equals(task.methodName)) {
-            int inputValue = Integer.parseInt(task.input.toString());
-            int result = StarterPack.getNthUglyNo(inputValue);
-        } else if ("longestPalSubstr".equals(task.methodName)) {
-            String result = StarterPack.longestPalSubstr(task.input.toString());
-        } else if ("sumOfDigitsFrom1ToN".equals(task.methodName)) {
-            int inputValue = Integer.parseInt(task.input.toString());
-            int result = StarterPack.sumOfDigitsFrom1ToN(inputValue);
-        }
-        // Add more cases if needed based on the actual methods in StarterPack.java
-    }
-    // Task class to represent tasks with method name, input type, and input
-    private static class Task<T extends Object> {
-        String methodName;
-        String inputType;
-        T input;
-
-        public Task(String methodName, String inputType, T input) {
-            this.methodName = methodName;
-            this.inputType = inputType;
-            this.input = input;
-        }
-        @Override
-        public String toString() {
-            return methodName + " " + inputType + " " + input;
-        }
-    }
-    private static class StarterPack {
-
-        public static int fib(int n) {
-            if (n <= 1)
-                return n;
-            return fib(n-1) + fib(n-2);
-        }
-
-        public static boolean isPrime(long n) {
-            if (n <= 1)
-                return false;
-
-            for (int i = 2; i < n; i++) {
-                if (n % i == 0)
-                    return false;
-            }
-
-            return true;
-        }
-
-        public static String longestPalSubstr(String str) {
-            int n = str.length();
-
-            boolean table[][] = new boolean[n][n];
-
-            int maxLength = 1;
-            for (int i = 0; i < n; ++i)
-                table[i][i] = true;
-
-            int start = 0;
-            for (int i = 0; i < n - 1; ++i) {
-                if (str.charAt(i) == str.charAt(i + 1)) {
-                    table[i][i + 1] = true;
-                    start = i;
-                    maxLength = 2;
-                }
-            }
-
-            for (int k = 3; k <= n; ++k) {
-                for (int i = 0; i < n - k + 1; ++i)
-                {
-                    int j = i + k - 1;
-
-                    if (table[i + 1][j - 1] && str.charAt(i) ==
-                            str.charAt(j)) {
-                        table[i][j] = true;
-
-                        if (k > maxLength) {
-                            start = i;
-                            maxLength = k;
-                        }
-                    }
-                }
-            }
-            return str.substring(start, start + maxLength);
-        }
-
-        public static int sumOfDigitsFrom1ToN(int n) {
-            int result = 0;
-
-            for (int x = 1; x <= n; x++)
-                result += sumOfDigits(x);
-
-            return result;
-        }
-
-        public static int sumOfDigits(int x) {
-            int sum = 0;
-            while (x != 0)
-            {
-                sum += x % 10;
-                x   = x / 10;
-            }
-            return sum;
-        }
-
-        public static int maxDivide(int a, int b)
-        {
-            while(a % b == 0)
-                a = a/b;
-            return a;
-        }
-
-        public static int isUgly(int no)
-        {
-            no = maxDivide(no, 2);
-            no = maxDivide(no, 3);
-            no = maxDivide(no, 5);
-
-            return (no == 1)? 1 : 0;
-        }
-
-
-        public static int getNthUglyNo(int n)
-        {
-            int i = 1;
-            int count = 1;
-
-            while(n > count)
-            {
-                i++;
-                if(isUgly(i) == 1)
-                    count++;
-            }
-            return i;
-        }
-
-    }
-
     
-    public static void main(String[] args) {
-        SchedulingSystems schedulingSystems = new SchedulingSystems();
-        schedulingSystems.loadTasks("C:\\Users\\muslim\\Desktop\\SEM1YEAR2\\WIA1002\\Scheduler\\src\\scheduler\\tasks.txt");
-        schedulingSystems.executeQueueSystem();
-        schedulingSystems.executeLinkedListSystem();
-        schedulingSystems.executeStackSystem();
-        schedulingSystems.calculateMetrics();
-    }
 }
 
 
