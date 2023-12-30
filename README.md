@@ -11,7 +11,7 @@ Universiti Malaya - Data Structure WIA1002 Group Assignment
 - [x] Execute Tasks
 - [ ] Queue Scheduler *Calculation might be inaccurate* **Need further review**
 - [ ] Linked List Scheduler
-- [ ] Stack Scheduler
+- [x] Stack Scheduler
 - [ ] Optimisation
 - [ ] GUI
 - [x] Report
