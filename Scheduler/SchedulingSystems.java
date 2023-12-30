@@ -194,7 +194,45 @@ public class SchedulingSystems {
     }
     // Method to execute tasks using LinkedList scheduling system
     public void executeLinkedListSystem() {
-        // Implement the execution logic using LinkedList
+        int taskCount = 1; // Initialize the task count
+        long currentTime = 0; // Keep track of the current time in nanoseconds
+        long totalResponseTime = 0; // Total response time for all tasks
+        long totalTurnaroundTime = 0; // Total turnaround time for all tasks
+        
+         // Print header for the table
+        System.out.printf("%-5s %-40s %-30s %-20s %-30s %-20s %-20s%n",
+                "Count",
+                "Task",
+                "Started Time",
+                "Response Time",
+                "Completed Time",
+                "Turnaround Time",
+                "Execution Time");
+        
+        while(linkedListSystem.getSize() > 0){
+            Task currentTask = linkedListSystem.removeFirst();
+            long executionTime = calculateExecutionTime(currentTask);
+
+            // Calculate and print the response and turnaround times for the current task
+            long responseTime = currentTime / 1000; // Convert nanoseconds to microseconds
+            long turnaroundTime = (currentTime + executionTime) / 1000; // Convert nanoseconds to microseconds
+            System.out.printf("%-5d %-40s %-30s %-20s %-30s %-20s %-20s%n",
+                    taskCount,
+                    currentTask,
+                    currentTime,
+                    responseTime + " microseconds",
+                    (currentTime + executionTime)+ " microseconds",
+                    turnaroundTime + " microseconds",
+                    executionTime + " microseconds");
+            
+            // Update total response and turnaround times
+            totalResponseTime += responseTime;
+            totalTurnaroundTime += turnaroundTime;
+
+            // Update the current time
+            currentTime += executionTime;
+            taskCount++;
+
     }
 
     // Method to execute tasks using Stack scheduling system
