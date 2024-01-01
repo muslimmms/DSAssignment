@@ -198,10 +198,15 @@ public class SchedulingSystems {
         long totalResponseTime = 0; // Total response time for all tasks
         long totalTurnaroundTime = 0; // Total turnaround time for all tasks
         
+<<<<<<< HEAD
         // Print header for the tables
         System.out.println();
         System.out.println("Linked List Scheduler System");
         System.out.printf("%-5s %-80s %-20s %-20s %-30s %-20s %-20s%n",
+=======
+         // Print header for the table
+        System.out.printf("%-5s %-40s %-30s %-20s %-30s %-20s %-20s%n",
+>>>>>>> e74f2f33290282bf7316c1dabf1a7626532cf74c
                 "Count",
                 "Task",
                 "Started Time",
@@ -212,7 +217,33 @@ public class SchedulingSystems {
         
         while(linkedListSystem.getSize() > 0){
             Task currentTask = linkedListSystem.removeFirst();
+<<<<<<< HEAD
             long executionTime = Task.calculateExecutionTime(currentTask);
+=======
+            long executionTime = calculateExecutionTime(currentTask);
+
+            // Calculate and print the response and turnaround times for the current task
+            long responseTime = currentTime / 1000; // Convert nanoseconds to microseconds
+            long turnaroundTime = (currentTime + executionTime) / 1000; // Convert nanoseconds to microseconds
+            System.out.printf("%-5d %-40s %-30s %-20s %-30s %-20s %-20s%n",
+                    taskCount,
+                    currentTask,
+                    currentTime,
+                    responseTime + " microseconds",
+                    (currentTime + executionTime)+ " microseconds",
+                    turnaroundTime + " microseconds",
+                    executionTime + " microseconds");
+            
+            // Update total response and turnaround times
+            totalResponseTime += responseTime;
+            totalTurnaroundTime += turnaroundTime;
+
+            // Update the current time
+            currentTime += executionTime;
+            taskCount++;
+
+    }
+>>>>>>> e74f2f33290282bf7316c1dabf1a7626532cf74c
 
             // Calculate and print the response and turnaround times for the current task
             long responseTime = currentTime / 1000; // Convert nanoseconds to microseconds
