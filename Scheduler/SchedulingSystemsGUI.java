@@ -20,12 +20,16 @@ public class SchedulingSystemsGUI {
     private final MyQueue<Task> queueSystem;
     private final MyLinkedList<Task> linkedListSystem;
     private final MyStack<Task> stackSystem;
-    private MyQueue<Task> originalQueue;
+    private MyQueue<Task> PriorityQueueSystem;
+    private long totalQueueSystemTime;
+    private long totalPriorityQueueSystemTime;
+    private long totalLinkedListSystemTime;
+    private long totalStackSystemTime;
 
     // Constructor to initialize the systems
     public SchedulingSystemsGUI() {
         queueSystem = new MyQueue<>(22);
-        originalQueue = new MyQueue<>(22);
+        PriorityQueueSystem = new MyQueue<>(22);
         linkedListSystem = new MyLinkedList<>();
         stackSystem = new MyStack<>(22);
     }
@@ -50,7 +54,7 @@ public class SchedulingSystemsGUI {
                 stackSystem.push(task);
                 
                 // Populate the original queue
-                originalQueue.enqueue(new Task(methodName, inputType, input));
+                PriorityQueueSystem.enqueue(task);
 
             }
             in.close();
@@ -125,7 +129,7 @@ public class SchedulingSystemsGUI {
         long averageTurnaroundTime = totalTurnaroundTime / queueSystem.getSize();
         System.out.printf("Average Response Time: %-20s%n", averageResponseTime + " microseconds");
         System.out.printf("Average Turnaround Time: %-20s%n", averageTurnaroundTime + " microseconds");
-        
+        totalQueueSystemTime += currentTime;
          // Convert the list to a 2D array
         return dataList.toArray(new Object[0][]);
     } 
@@ -152,8 +156,8 @@ public class SchedulingSystemsGUI {
         
         List<Object[]> dataList = new ArrayList<>();
         
-        while (!originalQueue.isEmpty()) {
-            Task currentTask = originalQueue.dequeue();
+        while (!PriorityQueueSystem.isEmpty()) {
+            Task currentTask = PriorityQueueSystem.dequeue();
             long executionTime = Task.calculateExecutionTime(currentTask);
 
             // Calculate and print the response and turnaround times for the current task
@@ -196,18 +200,19 @@ public class SchedulingSystemsGUI {
         long avgTurnaroundTime = totalTurnaroundTime / taskCount;
         System.out.println("Average Response Time: " + avgResponseTime + " microseconds");
         System.out.println("Average Turnaround Time: " + avgTurnaroundTime + " microseconds"); 
-        
+        // Update total time for the priority queue system
+        totalPriorityQueueSystemTime += currentTime;
          // Convert the list to a 2D array
         return dataList.toArray(new Object[0][]);
         
     }
     private void sortTasksByPriority() {
-        int n = originalQueue.getSize();
+        int n = PriorityQueueSystem.getSize();
         MyQueue<Task> tempQueue = new MyQueue<>(n);
 
         // Copy tasks to a temporary queue
-        while (!originalQueue.isEmpty()) {
-            tempQueue.enqueue(originalQueue.dequeue());
+        while (!PriorityQueueSystem.isEmpty()) {
+            tempQueue.enqueue(PriorityQueueSystem.dequeue());
         }
 
         // Selection Sort
@@ -229,12 +234,12 @@ public class SchedulingSystemsGUI {
                 }
             }
             // Enqueue the sorted task into the original queue
-            originalQueue.enqueue(minTask);
+            PriorityQueueSystem.enqueue(minTask);
         }
 
         // Enqueue the remaining tasks back to the original queue
         while (!tempQueue.isEmpty()) {
-            originalQueue.enqueue(tempQueue.dequeue());
+           PriorityQueueSystem.enqueue(tempQueue.dequeue());
         }
     }
     // Method to execute tasks using LinkedList scheduling system
@@ -301,7 +306,8 @@ public class SchedulingSystemsGUI {
         long avgTurnaroundTime = totalTurnaroundTime / taskCount;
         System.out.println("Average Response Time: " + avgResponseTime + " microseconds");
         System.out.println("Average Turnaround Time: " + avgTurnaroundTime + " microseconds"); 
-        
+        // Update total time for the linked list system
+        totalLinkedListSystemTime += currentTime;
         // Convert the list to a 2D array
         return dataList.toArray(new Object[0][]);
     }
@@ -369,7 +375,8 @@ public class SchedulingSystemsGUI {
         long avgTurnaroundTime = totalTurnaroundTime / taskCount;
         System.out.println("Average Response Time: " + avgResponseTime + " microseconds");
         System.out.println("Average Turnaround Time: " + avgTurnaroundTime + " microseconds"); 
-        
+        // Update total time for the stack system
+        totalStackSystemTime += currentTime;
          // Convert the list to a 2D array
         return dataList.toArray(new Object[0][]);
     }
@@ -438,5 +445,109 @@ public class SchedulingSystemsGUI {
         }
 
         return totalTurnaroundTime / data.length;
+    }
+    public long getTotalExecutionTime(String system) {
+        switch (system) {
+            case "Queue":
+                return calculateTotalExecutionTime(queueSystem);
+            case "LinkedList":
+                return calculateTotalExecutionTime(linkedListSystem);
+            case "Stack":
+                return calculateTotalExecutionTime(stackSystem);
+            case "PriorityQueue":
+                return calculateTotalExecutionTime(PriorityQueueSystem);
+            default:
+                return 0;
+        }
+    }
+
+    public String getFastestSystem() {
+        long queueTime = calculateTotalExecutionTime(queueSystem);
+        long linkedListTime = calculateTotalExecutionTime(linkedListSystem);
+        long stackTime = calculateTotalExecutionTime(stackSystem);
+        long priorityQueueTime = calculateTotalExecutionTime(PriorityQueueSystem);
+
+        long minTime = Math.min(Math.min(queueTime, linkedListTime), Math.min(stackTime, priorityQueueTime));
+
+        if (minTime == queueTime) {
+            return "Queue";
+        } else if (minTime == linkedListTime) {
+            return "LinkedList";
+        } else if (minTime == stackTime) {
+            return "Stack";
+        } else {
+            return "PriorityQueue";
+        }
+    }
+
+    private long calculateTotalExecutionTime(MyQueue<Task> tasks) {
+        long totalTime = 0;
+        for (Task task : tasks) {
+            totalTime += Task.calculateExecutionTime(task);
+    }
+    return totalTime;
+}
+    private long calculateTotalExecutionTime(MyLinkedList<Task> tasks) {
+        long totalTime = 0;
+        for (Task task : tasks) {
+            totalTime += Task.calculateExecutionTime(task);
+        }
+        return totalTime;
+    }
+
+    private long calculateTotalExecutionTime(MyStack<Task> tasks) {
+        long totalTime = 0;
+        for (Task task : tasks) {
+            totalTime += Task.calculateExecutionTime(task);
+        }
+        return totalTime;
+    }
+    
+     // Method to display the total time taken for each system and compare which is the fastest   
+    public String getTotalTimesAndFastestSystem() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("\nTotal Time Taken for Each Scheduling System:\n");
+    sb.append("Queue System Total Time: ").append(totalQueueSystemTime).append(" microseconds\n");
+    sb.append("Priority Queue System Total Time: ").append(totalPriorityQueueSystemTime).append(" microseconds\n");
+    sb.append("Linked List System Total Time: ").append(totalLinkedListSystemTime).append(" microseconds\n");
+    sb.append("Stack System Total Time: ").append(totalStackSystemTime).append(" microseconds\n");
+
+    // Find the fastest system
+    String fastestSystem = findFastestSystem();
+    sb.append("\nFastest Scheduling System: ").append(fastestSystem);
+
+    return sb.toString();
+}
+
+    // Helper method to find the fastest scheduling system
+    private String findFastestSystem() {
+        long minTime = Math.min(totalQueueSystemTime,
+                Math.min(totalPriorityQueueSystemTime,
+                        Math.min(totalLinkedListSystemTime, totalStackSystemTime)));
+
+        if (minTime == totalQueueSystemTime) {
+            return "Queue System";
+        } else if (minTime == totalPriorityQueueSystemTime) {
+            return "Priority Queue System";
+        } else if (minTime == totalLinkedListSystemTime) {
+            return "Linked List System";
+        } else {
+            return "Stack System";
+        }
+    }
+    public long getTotalQueueSystemTime() {
+        return totalQueueSystemTime;
+        }
+
+    public long getTotalPriorityQueueSystemTime() {
+        return totalPriorityQueueSystemTime;
+    }   
+
+    public long getTotalLinkedListSystemTime() {
+        return totalLinkedListSystemTime;
+    }
+
+    public long getTotalStackSystemTime() {
+        return totalStackSystemTime;
     }
 }
