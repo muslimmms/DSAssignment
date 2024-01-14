@@ -8,7 +8,7 @@ package scheduler;
  *
  * @author muslim
  */
-public class MyStack <T extends Object> {
+public class MyStack <T extends Object> implements Iterable<T>{
     int size;
     T[] arr;
     int top;
@@ -73,6 +73,25 @@ public class MyStack <T extends Object> {
         
         sb.append("]");
         return sb.toString();
+    }
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            private int currentIndex = top;
+
+            @Override
+            public boolean hasNext() {
+                return currentIndex >= 0;
+            }
+
+            @Override
+            public T next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                return arr[currentIndex--];
+            }
+        };
     }
     public static void main(String[] args) throws Exception {
         MyStack myStack = new MyStack(10);
