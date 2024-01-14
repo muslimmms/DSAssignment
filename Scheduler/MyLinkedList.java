@@ -8,7 +8,7 @@ package scheduler;
  *
  * @author muslim
  */
-public class MyLinkedList<T extends Object> {
+public class MyLinkedList<T extends Object> implements Iterable<T>{
     private Node<T> head;
     private Node<T> tail;
     private int size;
@@ -86,7 +86,27 @@ public class MyLinkedList<T extends Object> {
         size = 0;
         System.out.println("The list is cleared.");
     }
-    
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            private Node<T> current = head;
+
+            @Override
+            public boolean hasNext() {
+                return current != null;
+            }
+
+            @Override
+            public T next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                T data = current.getData();
+                current = current.getNext();
+                return data;
+            }
+        };
+    }
     
     
 }
