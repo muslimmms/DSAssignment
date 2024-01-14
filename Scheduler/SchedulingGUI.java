@@ -40,6 +40,8 @@ public class SchedulingGUI extends JFrame {
     private JButton executeStackButton;
     private JButton executeQueuePriorityButton;
     private JButton showGraphButton;  // New button for showing the graph
+    private JButton showTotalTimesButton; // New button
+
     
      // Add a flag to check if systems have been executed
     private boolean systemsExecuted = false;
@@ -63,12 +65,16 @@ public class SchedulingGUI extends JFrame {
         executeLinkedListButton = new JButton("Execute Linked List System");
         executeStackButton = new JButton("Execute Stack System");
         executeQueuePriorityButton = new JButton("Execute Priority Queue System");
+        showGraphButton = new JButton("Show Graph");
+        showTotalTimesButton = new JButton("Show Total Times"); // New button
 
         add(loadTasksButton);
         add(executeQueueButton);
         add(executeLinkedListButton);
         add(executeStackButton);
         add(executeQueuePriorityButton);
+        add(showGraphButton);
+        add(showTotalTimesButton); // Adding new button
 
         loadTasksButton.addActionListener(new ActionListener() {
             @Override
@@ -138,145 +144,89 @@ public class SchedulingGUI extends JFrame {
 //            }
             }
         });
-         showGraphButton = new JButton("Show Graph");
-        add(showGraphButton);
+        
 
         showGraphButton.addActionListener(e -> showGraph());
+        showTotalTimesButton.addActionListener(e -> showTotalTimes()); // Action for new button
 
         pack();
         setLocationRelativeTo(null);
     }
-   private void showGraph() {
-       
-    // Check if all systems have been executed
-    if (!queueExecuted || !linkedListExecuted || !stackExecuted || !queuePriorityExecuted) {
+    
+  private void showGraph() {
+    // Ensure all systems have been executed before showing the graph
+    if (!(queueExecuted && linkedListExecuted && stackExecuted && queuePriorityExecuted)) {
         JOptionPane.showMessageDialog(this, "Please execute all systems before showing the graph.");
         return;
     }
 
-    // Fetch the results from the previous executions
-    Object[][] queueResults = schedulingSystems.getQueueResults();
-    Object[][] linkedListResults = schedulingSystems.getLinkedListResults();
-    Object[][] stackResults = schedulingSystems.getStackResults();
-    Object[][] queuePriorityResults = schedulingSystems.getQueuePriorityResults();
+    // Create and display the graph
+    CategoryDataset dataset = createDataset();
+    JFreeChart chart = ChartFactory.createBarChart(
+        "Total Execution Times",
+        "Scheduling Systems",
+        "Time (ms or relative)", // Update label as appropriate
+        dataset,
+        PlotOrientation.VERTICAL,
+        true, true, false);
 
-    // Create datasets for JFreeChart
-    CategoryDataset dataset1 = createDataset(queueResults, linkedListResults, stackResults, queuePriorityResults, false);
-    CategoryDataset dataset2 = createDataset(queueResults, linkedListResults, stackResults, queuePriorityResults, true);
-
-    // Create and display the first chart
-    JFreeChart chart1 = createBarChart(dataset1, "Average Response and Turnaround Times", "Data Structures", "Time (microseconds)");
-    displayChart(chart1, "Average Times Comparison");
-
-    // Create and display the second chart
-    JFreeChart chart2 = createBarChart(dataset2, "Average Response and Turnaround Times (Averages)", "Data Structures", "Time (microseconds)");
-    displayChart(chart2, "Average Times Averages");
-
-    // Determine the fastest data structure and show it in a JOptionPane
-    String fastestStructure = determineFastestStructure(queueResults, linkedListResults, stackResults, queuePriorityResults);
-    JOptionPane.showMessageDialog(this, "The fastest data structure is: " + fastestStructure);
-    
+    ChartPanel chartPanel = new ChartPanel(chart);
+    chartPanel.setPreferredSize(new Dimension(800, 600));
+    JFrame chartFrame = new JFrame("Execution Times Comparison");
+    chartFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    chartFrame.add(chartPanel);
+    chartFrame.pack();
+    chartFrame.setLocationRelativeTo(null); // Center the frame
+    chartFrame.setVisible(true);
 }
    
-    private CategoryDataset createDataset(Object[][] queueResults, Object[][] linkedListResults, Object[][] stackResults, Object[][] queuePriorityResults, boolean isAverage) {
+    private CategoryDataset createDataset() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-    // Add data points to the dataset
-    addDataToDataset(dataset, queueResults, "Queue", isAverage);
-    addDataToDataset(dataset, linkedListResults, "Linked List", isAverage);
-    addDataToDataset(dataset, stackResults, "Stack", isAverage);
-    addDataToDataset(dataset, queuePriorityResults, "Priority Queue", isAverage);
+        // Normalize data (e.g., relative to the largest value)
+        double maxTime = Math.max(
+            Math.max(schedulingSystems.getTotalQueueSystemTime(), schedulingSystems.getTotalPriorityQueueSystemTime()),
+            Math.max(schedulingSystems.getTotalLinkedListSystemTime(), schedulingSystems.getTotalStackSystemTime())
+        );
 
-    return dataset;
+        dataset.addValue(schedulingSystems.getTotalQueueSystemTime() / maxTime, "Queue", "Relative Execution Time");
+        dataset.addValue(schedulingSystems.getTotalPriorityQueueSystemTime() / maxTime, "Priority Queue", "Relative Execution Time");
+        dataset.addValue(schedulingSystems.getTotalLinkedListSystemTime() / maxTime, "Linked List", "Relative Execution Time");
+        dataset.addValue(schedulingSystems.getTotalStackSystemTime() / maxTime, "Stack", "Relative Execution Time");
+
+        return dataset;
 }
-
-
-    // Determine the fastest data structure based on average times
-    private String determineFastestStructure(Object[][] queueResults, Object[][] linkedListResults, Object[][] stackResults, Object[][] queuePriorityResults) {
-        // Determine the fastest data structure based on average times
-        long avgQueueResponseTime = schedulingSystems.getAverageResponseTime(queueResults);
-        long avgLinkedListResponseTime = schedulingSystems.getAverageResponseTime(linkedListResults);
-        long avgStackResponseTime = schedulingSystems.getAverageResponseTime(stackResults);
-        long avgPriorityQueueResponseTime = schedulingSystems.getAverageResponseTime(queuePriorityResults);
-
-        // Find the minimum response time
-        long minResponseTime = Math.min(avgQueueResponseTime,
-                Math.min(avgLinkedListResponseTime,
-                        Math.min(avgStackResponseTime, avgPriorityQueueResponseTime)));
-
-        // Determine the fastest structure based on the minimum response time
-        if (minResponseTime == avgQueueResponseTime) {
-            return "Queue";
-        } else if (minResponseTime == avgLinkedListResponseTime) {
-            return "LinkedList";
-        } else if (minResponseTime == avgStackResponseTime) {
-            return "Stack";
-        } else {
-            return "PriorityQueue";
-        }
-    }
     
-     private void addDataToDataset(DefaultCategoryDataset dataset, Object[][] results, String structureName, boolean isAverage) {
-        for (Object[] result : results) {
-        // Assuming the result array has [dataStructure, averageTime] format
-        String dataStructure = (String) result[0];
-        long averageTime;
-
-        // Use different method based on isAverage flag
-        if (isAverage) {
-            averageTime = schedulingSystems.getAverageResponseTime(results);
-        } else {
-            if (result[1] instanceof String) {
-                averageTime = parseTime((String) result[1]);
-            } else if (result[1] instanceof Integer) {
-                averageTime = (Integer) result[1];
-            } else {
-                // Handle other cases or throw an exception based on your requirements
-                throw new IllegalArgumentException("Unsupported time format: " + result[1].getClass());
-            }
-        }
-
-        dataset.addValue(averageTime, structureName, dataStructure);
-    }
-}
-     
-     private JFreeChart createBarChart(CategoryDataset dataset, String title, String xAxisLabel, String yAxisLabel) {
-        return ChartFactory.createBarChart(title, xAxisLabel, yAxisLabel, dataset, PlotOrientation.VERTICAL, true, true, false);
+   private void showTotalTimes() {
+    // Ensure all systems have been executed before showing total times
+    if (!(queueExecuted && linkedListExecuted && stackExecuted && queuePriorityExecuted)) {
+        JOptionPane.showMessageDialog(this, "Please execute all systems before showing total times.");
+        return;
     }
 
-    private void displayChart(JFreeChart chart, String chartTitle) {
-        ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(800, 600));
+    JFrame totalTimesFrame = new JFrame("Total Times and Fastest System");
+    totalTimesFrame.setLayout(new BorderLayout());
+    JTextArea textArea = new JTextArea();
+    textArea.setEditable(false);
 
-        JFrame chartFrame = new JFrame(chartTitle);
-        chartFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        chartFrame.setLayout(new BorderLayout());
-        chartFrame.add(chartPanel, BorderLayout.CENTER);
-        chartFrame.pack();
-        chartFrame.setLocationRelativeTo(this);
-        chartFrame.setVisible(true);
-    }
+    // Retrieve total times and fastest system from schedulingSystems
+    String text = schedulingSystems.getTotalTimesAndFastestSystem();
 
-    private long parseTime(Object timeObject) {
-    if (timeObject instanceof String) {
-        String timeString = (String) timeObject;
-        return Long.parseLong(timeString.split(" ")[0]);
-    } else if (timeObject instanceof Integer) {
-        return (Integer) timeObject;
-    } else {
-        // Handle other cases or throw an exception based on your requirements
-        throw new IllegalArgumentException("Unsupported time format: " + timeObject.getClass());
-    }
+    textArea.setText(text);
+    totalTimesFrame.add(new JScrollPane(textArea), BorderLayout.CENTER);
+    totalTimesFrame.pack();
+    totalTimesFrame.setLocationRelativeTo(null); // Center the frame
+    totalTimesFrame.setVisible(true);
 }
 
     private void loadTasks() {
-    JFileChooser fileChooser = new JFileChooser();
-    int returnValue = fileChooser.showOpenDialog(this);
+        JFileChooser fileChooser = new JFileChooser();
+        int returnValue = fileChooser.showOpenDialog(this);
 
-    if (returnValue == JFileChooser.APPROVE_OPTION) {
-        String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-        schedulingSystems.loadTasks(filePath);
-        JOptionPane.showMessageDialog(this, "Tasks loaded successfully!");
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+            schedulingSystems.loadTasks(filePath);
+            JOptionPane.showMessageDialog(this, "Tasks loaded successfully!");
 
         // Reset execution flags and enable execution buttons
         queueExecuted = false;
@@ -284,10 +234,11 @@ public class SchedulingGUI extends JFrame {
         stackExecuted = false;
         queuePriorityExecuted = false;
         enableExecutionButtons(true);
+        }
     }
-}
 
    private void displayResults(String title, Object[][] data, long avgResponseTime, long avgTurnaroundTime) {
+       
     DefaultTableModel tableModel = new DefaultTableModel(data, schedulingSystems.getColumnNames());
     JTable table = new JTable(tableModel);
 
