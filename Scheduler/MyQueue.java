@@ -17,7 +17,7 @@ package scheduler;
  *
  * @author muslim
  */
-class MyQueue<T extends Object>{
+class MyQueue<T extends Object>implements Iterable<T>{
     private int head,tail,capacity;
     private T []arr;
     public MyQueue(){
@@ -86,6 +86,25 @@ class MyQueue<T extends Object>{
             }
         }
         return false;
+    }
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            private int currentIndex = 0;
+
+            @Override
+            public boolean hasNext() {
+                return currentIndex < tail && arr[currentIndex] != null;
+            }
+
+            @Override
+            public T next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                return arr[currentIndex++];
+            }
+        };
     }
 }
 
