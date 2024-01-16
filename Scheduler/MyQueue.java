@@ -11,7 +11,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package scheduler;
+package Scheduler;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  *
@@ -71,7 +74,7 @@ class MyQueue<T extends Object>implements Iterable<T>{
         ab.append("[");
         for(int i = 0; i<tail;i++){
             ab.append(arr[i]);
-            
+
             if(i < tail-1){
                 ab.append(", ");
             }

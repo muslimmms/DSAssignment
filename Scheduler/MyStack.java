@@ -2,7 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package scheduler;
+package Scheduler;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  *
@@ -43,7 +46,7 @@ public class MyStack <T extends Object> implements Iterable<T>{
             //temp[i] = Integer.parseInt(splitArray[i]);
             push(temp[i]);
         }
-        
+
     }
     T pop(){
         if(!isEmpty()){
@@ -62,15 +65,15 @@ public class MyStack <T extends Object> implements Iterable<T>{
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append("[");
-        
+
         for (int i = 0; i <= top; i++) {
             sb.append(arr[i]);
-            
+
             if (i < top) {
                 sb.append(", ");
             }
         }
-        
+
         sb.append("]");
         return sb.toString();
     }
@@ -93,17 +96,5 @@ public class MyStack <T extends Object> implements Iterable<T>{
             }
         };
     }
-    public static void main(String[] args) throws Exception {
-        MyStack myStack = new MyStack(10);
 
-        myStack.push(1);
-        myStack.push(2);
-        myStack.push(3);
-        //myStack.pushMany("4,5,6");
-
-        System.out.println("Stack contents: " + myStack);
-        myStack.popAll();
-        System.out.println("Stack contents: " + myStack);
-
-    }   
 }

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Assignment;
+package Scheduler;
 
 /**
  *
@@ -42,17 +42,17 @@ public class SchedulingSystemsGUI {
             while(in.hasNextLine()){
                 String line = in.nextLine();
                 String[] parts = line.split(" ");
-                
+
                 String methodName = parts[0];
                 String inputType = parts[1];
                 String input = parts[2];
-                
+
                 Task task = new Task(methodName, inputType, input);
-                
+
                 queueSystem.enqueue(task);
                 linkedListSystem.addLast(task);
                 stackSystem.push(task);
-                
+
                 // Populate the original queue
                 PriorityQueueSystem.enqueue(task);
 
@@ -65,7 +65,7 @@ public class SchedulingSystemsGUI {
 
     // Method to execute tasks using Queue scheduling system
     public Object[][] executeQueueSystem() {
-        
+
         int taskCount = 1; // Initialize the task count
         long currentTime = 0; // Keep track of the current time in nanoseconds
         long totalResponseTime = 0; // Total response time for all tasks
@@ -82,7 +82,7 @@ public class SchedulingSystemsGUI {
                 "Completed Time",
                 "Turnaround Time",
                 "Execution Time");
-        
+
         List<Object[]> dataList = new ArrayList<>();
 
         while (!queueSystem.isEmpty()) {
@@ -100,8 +100,8 @@ public class SchedulingSystemsGUI {
                     (currentTime + executionTime)+ " microseconds",
                     turnaroundTime + " microseconds",
                     executionTime + " microseconds");
-            
-             // Create an array to hold the data for the current task
+
+            // Create an array to hold the data for the current task
             Object[] rowData = new Object[]{
                     taskCount,
                     currentTask,
@@ -111,10 +111,10 @@ public class SchedulingSystemsGUI {
                     turnaroundTime + " microseconds",
                     executionTime + " microseconds"
             };
-            
+
             // Add the data for the current task to the list
             dataList.add(rowData);
-            
+
             // Update total response and turnaround times
             totalResponseTime += responseTime;
             totalTurnaroundTime += turnaroundTime;
@@ -130,11 +130,11 @@ public class SchedulingSystemsGUI {
         System.out.printf("Average Response Time: %-20s%n", averageResponseTime + " microseconds");
         System.out.printf("Average Turnaround Time: %-20s%n", averageTurnaroundTime + " microseconds");
         totalQueueSystemTime += currentTime;
-         // Convert the list to a 2D array
+        // Convert the list to a 2D array
         return dataList.toArray(new Object[0][]);
-    } 
+    }
     public Object[][] executeQueueSystemPriority() { // Save the original queue
-        
+
         int taskCount = 1; // Initialize the task count
         long currentTime = 0; // Keep track of the current time in nanoseconds
         long totalResponseTime = 0; // Total response time for all tasks
@@ -153,9 +153,9 @@ public class SchedulingSystemsGUI {
 
         // Sort tasks by priority (you need to implement a method to sort tasks by priority)
         sortTasksByPriority();
-        
+
         List<Object[]> dataList = new ArrayList<>();
-        
+
         while (!PriorityQueueSystem.isEmpty()) {
             Task currentTask = PriorityQueueSystem.dequeue();
             long executionTime = Task.calculateExecutionTime(currentTask);
@@ -171,7 +171,7 @@ public class SchedulingSystemsGUI {
                     (currentTime + executionTime) + " microseconds",
                     turnaroundTime + " microseconds",
                     executionTime + " microseconds");
-            
+
             // Create an array to hold the data for the current task
             Object[] rowData = new Object[]{
                     taskCount,
@@ -182,10 +182,10 @@ public class SchedulingSystemsGUI {
                     turnaroundTime + " microseconds",
                     executionTime + " microseconds"
             };
-            
+
             // Add the data for the current task to the list
             dataList.add(rowData);
-            
+
             // Update total response and turnaround times
             totalResponseTime += responseTime;
             totalTurnaroundTime += turnaroundTime;
@@ -199,12 +199,12 @@ public class SchedulingSystemsGUI {
         long avgResponseTime = totalResponseTime / taskCount;
         long avgTurnaroundTime = totalTurnaroundTime / taskCount;
         System.out.println("Average Response Time: " + avgResponseTime + " microseconds");
-        System.out.println("Average Turnaround Time: " + avgTurnaroundTime + " microseconds"); 
+        System.out.println("Average Turnaround Time: " + avgTurnaroundTime + " microseconds");
         // Update total time for the priority queue system
         totalPriorityQueueSystemTime += currentTime;
-         // Convert the list to a 2D array
+        // Convert the list to a 2D array
         return dataList.toArray(new Object[0][]);
-        
+
     }
     private void sortTasksByPriority() {
         int n = PriorityQueueSystem.getSize();
@@ -239,7 +239,7 @@ public class SchedulingSystemsGUI {
 
         // Enqueue the remaining tasks back to the original queue
         while (!tempQueue.isEmpty()) {
-           PriorityQueueSystem.enqueue(tempQueue.dequeue());
+            PriorityQueueSystem.enqueue(tempQueue.dequeue());
         }
     }
     // Method to execute tasks using LinkedList scheduling system
@@ -248,7 +248,7 @@ public class SchedulingSystemsGUI {
         long currentTime = 0; // Keep track of the current time in nanoseconds
         long totalResponseTime = 0; // Total response time for all tasks
         long totalTurnaroundTime = 0; // Total turnaround time for all tasks
-        
+
         // Print header for the tables
         System.out.println();
         System.out.println("Linked List Scheduler System");
@@ -260,9 +260,9 @@ public class SchedulingSystemsGUI {
                 "Completed Time",
                 "Turnaround Time",
                 "Execution Time");
-        
-         List<Object[]> dataList = new ArrayList<>();
-        
+
+        List<Object[]> dataList = new ArrayList<>();
+
         while(linkedListSystem.getSize() > 0){
             Task currentTask = linkedListSystem.removeFirst();
             long executionTime = Task.calculateExecutionTime(currentTask);
@@ -278,7 +278,7 @@ public class SchedulingSystemsGUI {
                     (currentTime + executionTime)+ " microseconds",
                     turnaroundTime + " microseconds",
                     executionTime + " microseconds");
-            
+
             // Create an array to hold the data for the current task
             Object[] rowData = new Object[]{
                     taskCount,
@@ -289,10 +289,10 @@ public class SchedulingSystemsGUI {
                     turnaroundTime + " microseconds",
                     executionTime + " microseconds"
             };
-            
+
             // Add the data for the current task to the list
             dataList.add(rowData);
-            
+
             // Update total response and turnaround times
             totalResponseTime += responseTime;
             totalTurnaroundTime += turnaroundTime;
@@ -305,7 +305,7 @@ public class SchedulingSystemsGUI {
         long avgResponseTime = totalResponseTime / taskCount;
         long avgTurnaroundTime = totalTurnaroundTime / taskCount;
         System.out.println("Average Response Time: " + avgResponseTime + " microseconds");
-        System.out.println("Average Turnaround Time: " + avgTurnaroundTime + " microseconds"); 
+        System.out.println("Average Turnaround Time: " + avgTurnaroundTime + " microseconds");
         // Update total time for the linked list system
         totalLinkedListSystemTime += currentTime;
         // Convert the list to a 2D array
@@ -321,34 +321,34 @@ public class SchedulingSystemsGUI {
         System.out.println();
         System.out.println("Stack Scheduler System");
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%-5s %-80s %-20s %-20s %-30s %-20s %-20s%n",             
-            "Count",
-            "Task",
-            "Started Time",
-            "Response Time",
-            "Completed Time",
-            "Turnaround Time",
-            "Execution Time"));
-         System.out.print(sb);
-         
-         List<Object[]> dataList = new ArrayList<>();
-        
-         while(!stackSystem.isEmpty()){
-                Task currentTask = stackSystem.pop();
-                long executionTime = Task.calculateExecutionTime(currentTask);
-                // Calculate and print the response and turnaround times for the current task
-                long responseTime = currentTime / 1000; // Convert nanoseconds to microseconds
-                long turnaroundTime = (currentTime + executionTime) / 1000; // Convert nanoseconds to microseconds
+        sb.append(String.format("%-5s %-80s %-20s %-20s %-30s %-20s %-20s%n",
+                "Count",
+                "Task",
+                "Started Time",
+                "Response Time",
+                "Completed Time",
+                "Turnaround Time",
+                "Execution Time"));
+        System.out.print(sb);
 
-                StringBuilder output = new StringBuilder();
-                output.append(String.format("%-5d %-80s %-20s %-20s %-30s %-20s %-20s%n",
-                taskCount, currentTask, currentTime, responseTime + " microseconds",
+        List<Object[]> dataList = new ArrayList<>();
+
+        while(!stackSystem.isEmpty()){
+            Task currentTask = stackSystem.pop();
+            long executionTime = Task.calculateExecutionTime(currentTask);
+            // Calculate and print the response and turnaround times for the current task
+            long responseTime = currentTime / 1000; // Convert nanoseconds to microseconds
+            long turnaroundTime = (currentTime + executionTime) / 1000; // Convert nanoseconds to microseconds
+
+            StringBuilder output = new StringBuilder();
+            output.append(String.format("%-5d %-80s %-20s %-20s %-30s %-20s %-20s%n",
+                    taskCount, currentTask, currentTime, responseTime + " microseconds",
                     (currentTime + executionTime) + " microseconds", turnaroundTime + " microseconds",
                     executionTime + " microseconds"));
 
-                    System.out.print(output);
-                    
-                // Create an array to hold the data for the current task
+            System.out.print(output);
+
+            // Create an array to hold the data for the current task
             Object[] rowData = new Object[]{
                     taskCount,
                     currentTask,
@@ -362,22 +362,22 @@ public class SchedulingSystemsGUI {
             // Add the data for the current task to the list
             dataList.add(rowData);
 
-                // Update total response and turnaround times
-                totalResponseTime += responseTime;
-                totalTurnaroundTime += turnaroundTime;
+            // Update total response and turnaround times
+            totalResponseTime += responseTime;
+            totalTurnaroundTime += turnaroundTime;
 
-                // Update the current time
-                currentTime += executionTime;
-                taskCount++;             
-         }
+            // Update the current time
+            currentTime += executionTime;
+            taskCount++;
+        }
         // Print average response and turnaround times
         long avgResponseTime = totalResponseTime / taskCount;
         long avgTurnaroundTime = totalTurnaroundTime / taskCount;
         System.out.println("Average Response Time: " + avgResponseTime + " microseconds");
-        System.out.println("Average Turnaround Time: " + avgTurnaroundTime + " microseconds"); 
+        System.out.println("Average Turnaround Time: " + avgTurnaroundTime + " microseconds");
         // Update total time for the stack system
         totalStackSystemTime += currentTime;
-         // Convert the list to a 2D array
+        // Convert the list to a 2D array
         return dataList.toArray(new Object[0][]);
     }
     // Method to get column names
@@ -385,7 +385,7 @@ public class SchedulingSystemsGUI {
         // Replace these column names with the actual column names you want to display
         return new String[]{"Count", "Task", "Started Time", "Response Time", "Completed Time", "Turnaround Time", "Execution Time"};
     }
-     // New method to get the results of the Queue system
+    // New method to get the results of the Queue system
     public Object[][] getQueueResults() {
         return executeQueueSystem();
     }
@@ -404,8 +404,8 @@ public class SchedulingSystemsGUI {
     public Object[][] getStackResults() {
         return executeStackSystem();
     }
-    
- public long getAverageResponseTime(Object[][] data) {
+
+    public long getAverageResponseTime(Object[][] data) {
         if (data.length == 0) {
             return 0;
         }
@@ -484,9 +484,9 @@ public class SchedulingSystemsGUI {
         long totalTime = 0;
         for (Task task : tasks) {
             totalTime += Task.calculateExecutionTime(task);
+        }
+        return totalTime;
     }
-    return totalTime;
-}
     private long calculateTotalExecutionTime(MyLinkedList<Task> tasks) {
         long totalTime = 0;
         for (Task task : tasks) {
@@ -502,22 +502,22 @@ public class SchedulingSystemsGUI {
         }
         return totalTime;
     }
-    
-     // Method to display the total time taken for each system and compare which is the fastest   
+
+    // Method to display the total time taken for each system and compare which is the fastest
     public String getTotalTimesAndFastestSystem() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("\nTotal Time Taken for Each Scheduling System:\n");
-    sb.append("Queue System Total Time: ").append(totalQueueSystemTime).append(" microseconds\n");
-    sb.append("Priority Queue System Total Time: ").append(totalPriorityQueueSystemTime).append(" microseconds\n");
-    sb.append("Linked List System Total Time: ").append(totalLinkedListSystemTime).append(" microseconds\n");
-    sb.append("Stack System Total Time: ").append(totalStackSystemTime).append(" microseconds\n");
+        StringBuilder sb = new StringBuilder();
+        sb.append("\nTotal Time Taken for Each Scheduling System:\n");
+        sb.append("Queue System Total Time: ").append(totalQueueSystemTime).append(" microseconds\n");
+        sb.append("Priority Queue System Total Time: ").append(totalPriorityQueueSystemTime).append(" microseconds\n");
+        sb.append("Linked List System Total Time: ").append(totalLinkedListSystemTime).append(" microseconds\n");
+        sb.append("Stack System Total Time: ").append(totalStackSystemTime).append(" microseconds\n");
 
-    // Find the fastest system
-    String fastestSystem = findFastestSystem();
-    sb.append("\nFastest Scheduling System: ").append(fastestSystem);
+        // Find the fastest system
+        String fastestSystem = findFastestSystem();
+        sb.append("\nFastest Scheduling System: ").append(fastestSystem);
 
-    return sb.toString();
-}
+        return sb.toString();
+    }
 
     // Helper method to find the fastest scheduling system
     private String findFastestSystem() {
@@ -537,11 +537,11 @@ public class SchedulingSystemsGUI {
     }
     public long getTotalQueueSystemTime() {
         return totalQueueSystemTime;
-        }
+    }
 
     public long getTotalPriorityQueueSystemTime() {
         return totalPriorityQueueSystemTime;
-    }   
+    }
 
     public long getTotalLinkedListSystemTime() {
         return totalLinkedListSystemTime;

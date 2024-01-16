@@ -1,4 +1,4 @@
-package scheduler;
+package Scheduler;
 
 import java.util.Scanner;
 import java.io.FileInputStream;

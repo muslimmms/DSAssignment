@@ -2,7 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package scheduler;
+package Scheduler;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  *
@@ -43,7 +46,7 @@ public class MyLinkedList<T extends Object> implements Iterable<T>{
         }
         size++;
     }
-    
+
     public T removeFirst() {
         if(head == null){
             return null;
@@ -51,14 +54,14 @@ public class MyLinkedList<T extends Object> implements Iterable<T>{
         T removedData = head.getData();
         head = head.getNext();
         size--;
-        
+
         if(head == null) {
             tail = null;
         }
-        
+
         return removedData;
     }
-    
+
     @Override
     public String toString(){
         StringBuilder result = new StringBuilder("[size=" + size + "] ");
@@ -67,9 +70,9 @@ public class MyLinkedList<T extends Object> implements Iterable<T>{
             result.append(" >> ").append(current.getData());
             current = current.getNext();
         }
-        return result.toString(); 
+        return result.toString();
     }
-    
+
     public boolean contains(T element){
         Node<T> current = head;
         while (current != null){
@@ -79,7 +82,7 @@ public class MyLinkedList<T extends Object> implements Iterable<T>{
         }
         return false;
     }
-    
+
     public void clear() {
         head = null;
         tail = null;
@@ -107,6 +110,6 @@ public class MyLinkedList<T extends Object> implements Iterable<T>{
             }
         };
     }
-    
-    
+
+
 }

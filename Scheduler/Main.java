@@ -1,4 +1,4 @@
-package scheduler;
+package Scheduler;
 
 public class Main {
     public static void main(String[] args) {
