@@ -86,8 +86,7 @@ public class SchedulingGUI extends JFrame {
        executeQueueButton.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-//        if (!systemsExecuted) {
-            // Execute the queue system and display results
+       
             queueExecuted = true;
             executeQueueButton.setEnabled(false);
             Object[][] queueResults = schedulingSystems.getQueueResults();
@@ -219,23 +218,21 @@ public class SchedulingGUI extends JFrame {
     totalTimesFrame.setVisible(true);
 }
 
-    private void loadTasks() {
-        JFileChooser fileChooser = new JFileChooser();
-        int returnValue = fileChooser.showOpenDialog(this);
+   private void loadTasks() {
+    // Specify the file path directly or use any logic to determine the file path
+    String filePath = "C:\\Users\\Darwi\\OneDrive - Universiti Malaya\\Desktop\\tasks.txt";  // Replace this with the actual file path
 
-        if (returnValue == JFileChooser.APPROVE_OPTION) {
-            String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-            schedulingSystems.loadTasks(filePath);
-            JOptionPane.showMessageDialog(this, "Tasks loaded successfully!");
+    // Load tasks
+    schedulingSystems.loadTasks(filePath);
+    JOptionPane.showMessageDialog(this, "Tasks loaded successfully!");
 
-        // Reset execution flags and enable execution buttons
-        queueExecuted = false;
-        linkedListExecuted = false;
-        stackExecuted = false;
-        queuePriorityExecuted = false;
-        enableExecutionButtons(true);
-        }
-    }
+    // Reset execution flags and enable execution buttos
+    queueExecuted = false;
+    linkedListExecuted = false;
+    stackExecuted = false;
+    queuePriorityExecuted = false;
+    enableExecutionButtons(true);
+}
 
    private void displayResults(String title, Object[][] data, long avgResponseTime, long avgTurnaroundTime) {
        
