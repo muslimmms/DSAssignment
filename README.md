@@ -12,9 +12,9 @@ Universiti Malaya - Data Structure WIA1002 Group Assignment
 - [x] Linked List Scheduler
 - [x] Stack Scheduler
 - [ ] Optimisation
-- [ ] GUI
+- [x] GUI
 - [x] Report
-- [ ] Presentation
+- [x] Presentation
 
 ### Manual
 1. Go to SchedulingSystems.JAVA
