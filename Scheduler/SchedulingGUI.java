@@ -220,7 +220,7 @@ public class SchedulingGUI extends JFrame {
 
    private void loadTasks() {
     // Specify the file path directly or use any logic to determine the file path
-    String filePath = "C:\\Users\\Darwi\\OneDrive - Universiti Malaya\\Desktop\\tasks.txt";  // Replace this with the actual file path
+    String filePath = "tasks.txt";  // Replace this with the actual file path
 
     // Load tasks
     schedulingSystems.loadTasks(filePath);
