@@ -31,6 +31,8 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+// Run the GUI
+
 public class SchedulingGUI extends JFrame {
     private final SchedulingSystemsGUI schedulingSystems;
 

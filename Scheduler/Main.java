@@ -1,5 +1,7 @@
 package Scheduler;
 
+// Run at the main IDE terminal
+
 public class Main {
     public static void main(String[] args) {
         SchedulingSystems schedulingSystems = new SchedulingSystems();
