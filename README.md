@@ -6,18 +6,9 @@ Universiti Malaya - Data Structure WIA1002 Group Assignment
 
 ### Scheduler System
 
-- [x] Read File
-- [x] Execute Tasks
-- [x] Queue Scheduler *Calculation might be inaccurate* **Need further review**
-- [x] Linked List Scheduler
-- [x] Stack Scheduler
-- [ ] Optimisation
-- [x] GUI
-- [x] Report
-- [x] Presentation
-
 ### Manual
-1. Go to SchedulingSystems.JAVA
-2. Change the filepath dir for **tasks.txt**
-3. Run the file
-
+1. Go to SchedulingGUI.JAVA
+2. Run the file
+3. Load Tasks
+4. Execute all the systems before generating the graph and results
+5. If file tasks.txt is not found, modify the filePath directory in loadTasks method (SchedulingGUI.JAVA) to your tasks.txt file path in your system.
